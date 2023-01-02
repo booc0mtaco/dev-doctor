@@ -63,7 +63,7 @@ TBD
 module.exports = [
 {
     type: "exist",
-    glob: "**/*/test.js
+    glob: "**/*/test.js",
 },
 {
     type: "cmd",
