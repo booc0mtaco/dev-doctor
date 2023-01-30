@@ -1,0 +1,30 @@
+{
+  "name": "dev-doctor",
+  "version": "0.0.1",
+  "description": "A doctor for your dev",
+  "main": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/booc0mtaco/dev-doctor.git"
+  },
+  "keywords": [
+    "cli",
+    "config",
+    "doctor"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/booc0mtaco/dev-doctor/issues"
+  },
+  "homepage": "https://github.com/booc0mtaco/dev-doctor#readme",
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "commander": "^10.0.0",
+    "lilconfig": "^2.0.6",
+    "ora": "^6.1.2"
+  }
+}
