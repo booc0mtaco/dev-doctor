@@ -1,5 +1,5 @@
 module.exports = [
-  // export default [
+  // TODO: other useful metadata: (description, suggestion text, error message, etc.)
   {
     type: "exist",
     glob: "**/*/test.js",
