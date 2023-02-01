@@ -9,64 +9,54 @@ const rules = require("./rules");
 (async function () {
   const ora = (await import("ora")).default;
 
-  const options = {
-    ignoreEmptySearchPlaces: false,
-  };
-  const spinner = ora("Calling doctor").start();
+  function printDiagnosis(results) {
+    const failures = results.filter((result) => !result.pass).length;
+    const total = results.length;
+    const prefix = failures > 0 ? "❌ FAIL" : "✅ OK";
 
-  const runDoctor = function () {
-    // read in the config
-    lilconfig("dev-doctor", options)
-      .search()
-      .then((result) => {
-        spinner.text = "got config!";
+    console.log(`\n${prefix} (${total - failures}/${total} checks passed)\n`);
 
-        // now check repo for each config item to see if it generates error
-        result.config.forEach((rule) => {
-          const { type, ...opts } = rule;
-          spinner.start(`run rule ${rule.type}`);
-          // TODO: should do some pre-run checks to make sure a rule by this name exists first!
-          if (rules[type](opts)) {
-            spinner.succeed(
-              `rule passed: ${rule.type} with opts ${Object.entries(opts)}`
-            );
-          } else {
-            // if true, spinner.succeed)
-            // if false, fail with opts.errorMessage or default
-            // TODO: suggest fix?
-          }
-        });
-        /*
-        
-        option: instead of for loop, create promises for each rule, and (promise.all?)
-        - one ora string for each rule?
+    return failures ? -1 : 0;
+  }
 
-        for each rule in the config:
-          switch (rule) {
-            case fileExists
-              fileExists(glob); 
-              break;
-          }
+  async function runDoctor() {
+    const spinner = ora("Calling doctor").start();
+    const results = [];
+    const result = await lilconfig("dev-doctor", {
+      ignoreEmptySearchPlaces: false,
+    }).search();
+    spinner.info("The doctor is in! Performing checkup. . .");
 
-        1. we loop through config and execute each rule
-        2. each rule can fail, if that happens log some output
-        3. show failure/success results + steps
-        aka output one would expect from a test suite
+    // now check repo for each config item to see if it generates error
+    result.config.forEach((rule) => {
+      const { type, ...opts } = rule;
+      spinner.start(`run rule ${rule.type}`);
+      // TODO: should do some pre-run checks to make sure a rule by this name exists first!
+      if (rules[type]) {
+        if (rules[type](opts)) {
+          spinner.succeed(
+            `rule passed: ${rule.type} with opts ${Object.entries(opts)}`
+          );
+          results.push({ ...rule, pass: true });
+        } else {
+          // TODO: suggest fix?
+          spinner.fail(`rule failed: ${rule.type}`);
+          results.push({ ...rule, pass: false });
+        }
+      }
+    });
+    /**
+     * cmd
+     *  - foo.sh failed
+     *  - to fix: do bar
+     */
+    printDiagnosis(results);
+  }
 
-        dev-doctor 2/3 success
-        failures:
-        * cmd - foo.sh failed 
-            to fix: do bar
-        */
-      });
-  };
-
-  // allow the user to trigger the command
   program
     .version("0.0.1")
     .description("Diagnose your development environment")
-    .action((str, options) => {
-      spinner.text = "read config file and do doctor things";
+    .action(() => {
       runDoctor();
     });
 
