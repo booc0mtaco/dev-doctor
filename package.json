@@ -2,7 +2,8 @@
   "name": "dev-doctor",
   "version": "0.0.1",
   "description": "A doctor for your dev",
-  "main": "module",
+  "main": "index.js",
+  "bin": "./index.js",
   "scripts": {
     "test": "jest"
   },

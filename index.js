@@ -78,12 +78,16 @@ const RULE_TYPES = {
         spinner.start(enhancedRule.description);
         try {
           const ruleResult = { ...rule, pass: await rules[type](opts) };
-          spinner[ruleResult.pass ? "succeed" : "fail"]();
+          if (ruleResult.pass) {
+            spinner.succeed();
+          } else {
+            spinner.fail(`Failed: ${chalk.red.bold(rule.suggestion)}`);
+          }
           results.push(ruleResult);
         } catch (e) {
           const ruleResult = { ...rule, pass: false };
 
-          spinner.fail();
+          spinner.fail(`Failed: ${chalk.red.bold(rule.suggestion)}`);
           results.push(ruleResult);
         }
       }

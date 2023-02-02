@@ -6,6 +6,7 @@ module.exports = [
   {
     type: "cmd",
     exec: "npm",
+    suggestion: "Make sure to install node locally: brew install node",
   },
   {
     type: "version",
