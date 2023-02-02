@@ -17,6 +17,7 @@ const RULE_TYPES = {
 // Learnings 2: Maybe checking network is a good new option?
 (async function () {
   const ora = (await import("ora")).default;
+  const chalk = (await import("chalk")).default;
 
   function printDiagnosis(results) {
     const failures = results.filter((result) => !result.pass).length;
@@ -61,11 +62,14 @@ const RULE_TYPES = {
     const result = await lilconfig("dev-doctor", {
       ignoreEmptySearchPlaces: false,
     }).search();
-    spinner.info("The doctor is in! Performing checkup. . .");
+    spinner.info(
+      `${chalk.underline.bold("The doctor is in")}! Performing checkup. . .`
+    );
 
     // now check repo for each config item to see if it generates error
-    result.config.forEach((rule) => {
-      const { type, ...opts } = rule;
+    for (var i = 0, len = result.config.length; i < len; i++) {
+      const { type, ...opts } = result.config[i],
+        rule = result.config[i];
 
       // Grab metadata for the standard rules
       const enhancedRule = Object.assign({}, rule, getMeta(type));
@@ -73,11 +77,19 @@ const RULE_TYPES = {
       spinner.start(enhancedRule.description);
 
       if (rules[type]) {
-        const ruleResult = { ...rule, pass: rules[type](opts) };
-        results.push(ruleResult);
-        spinner[ruleResult.pass ? "succeed" : "fail"]();
+        try {
+          const ruleResult = { ...rule, pass: await rules[type](opts) };
+          spinner[ruleResult.pass ? "succeed" : "fail"]();
+          results.push(ruleResult);
+        } catch (e) {
+          const ruleResult = { ...rule, pass: false };
+
+          spinner.fail();
+          results.push(ruleResult);
+        }
       }
-    });
+    }
+
     /**
      * cmd
      *  - foo.sh failed
