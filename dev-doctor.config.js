@@ -1,7 +1,7 @@
 module.exports = [
   {
     type: "exist",
-    glob: "**/*/test.js",
+    glob: "./rules/**/*.spec.js",
   },
   {
     type: "cmd",
