@@ -2,9 +2,8 @@ const {execSync} = require("child_process");
 
 module.exports = function cmd({exec}) {
   try {
-    execSync(exec);
+    execSync(`which ${exec}`);
   } catch (err) {
-    console.error(err);
     return false;
   }
 
