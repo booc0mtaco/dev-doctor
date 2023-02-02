@@ -1,8 +1,17 @@
 #! /usr/bin/env node
+const { version } = require("./package.json");
 
 const { program } = require("commander");
 const { lilconfig } = require("lilconfig");
 const rules = require("./rules");
+
+const RULE_TYPES = {
+  EXIST: "exist",
+  CMD: "cmd",
+  VERSION: "version",
+  NETWORK: "network",
+  OS: "os",
+};
 
 // Learnings 1: JS modules are hard, yo...
 // Learnings 2: Maybe checking network is a good new option?
@@ -19,6 +28,33 @@ const rules = require("./rules");
     return failures ? -1 : 0;
   }
 
+  function getMeta(ruleType) {
+    switch (ruleType) {
+      case RULE_TYPES.CMD:
+        return {
+          description: `Check if command executes properly`,
+        };
+      case RULE_TYPES.EXIST:
+        return {
+          description: `Check for important config files`,
+        };
+      case RULE_TYPES.VERSION:
+        return {
+          description: `Check the version of the installed executable`,
+        };
+      case RULE_TYPES.NETWORK:
+        return {
+          description: `Check the network ports`,
+        };
+      case RULE_TYPES.OS:
+        return {
+          description: `Check the Operating System configuration`,
+        };
+      default:
+        return {};
+    }
+  }
+
   async function runDoctor() {
     const spinner = ora("Calling doctor").start();
     const results = [];
@@ -30,19 +66,16 @@ const rules = require("./rules");
     // now check repo for each config item to see if it generates error
     result.config.forEach((rule) => {
       const { type, ...opts } = rule;
-      spinner.start(`run rule ${rule.type}`);
-      // TODO: should do some pre-run checks to make sure a rule by this name exists first!
+
+      // Grab metadata for the standard rules
+      const enhancedRule = Object.assign({}, rule, getMeta(type));
+
+      spinner.start(enhancedRule.description);
+
       if (rules[type]) {
-        if (rules[type](opts)) {
-          spinner.succeed(
-            `rule passed: ${rule.type} with opts ${Object.entries(opts)}`
-          );
-          results.push({ ...rule, pass: true });
-        } else {
-          // TODO: suggest fix?
-          spinner.fail(`rule failed: ${rule.type}`);
-          results.push({ ...rule, pass: false });
-        }
+        const ruleResult = { ...rule, pass: rules[type](opts) };
+        results.push(ruleResult);
+        spinner[ruleResult.pass ? "succeed" : "fail"]();
       }
     });
     /**
@@ -53,12 +86,9 @@ const rules = require("./rules");
     printDiagnosis(results);
   }
 
-  program
-    .version("0.0.1")
-    .description("Diagnose your development environment")
-    .action(() => {
-      runDoctor();
-    });
-
+  program.version(version).description("Diagnose your development environment");
   program.parse();
+
+  // TODO: somehow triggering help terminates. We run doctor if we get here
+  runDoctor(program.opts());
 })();
