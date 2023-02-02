@@ -1,5 +1,6 @@
 // TODO rule helper imports AND/OR imports from individual rule files
 const exist = require("./exist/exist");
+const cmd = require("./cmd/cmd");
 
 // 2. run as shell commands where:
 // if pass (e.g., file exists), return boolean true
@@ -7,16 +8,5 @@ const exist = require("./exist/exist");
 
 module.exports = {
   exist,
-  cmd: function (opts) {
-    console.log("cmd function");
-    return true;
-  },
-  version: function (opts) {
-    console.log("version function");
-    return true;
-  },
-  os: function (opts) {
-    console.log("os function");
-    return true;
-  },
+  cmd,
 };

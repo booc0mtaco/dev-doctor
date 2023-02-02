@@ -5,7 +5,7 @@ module.exports = [
   },
   {
     type: "cmd",
-    exec: "path/to/executable",
+    exec: "npm",
   },
   {
     type: "version",

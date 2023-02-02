@@ -33,7 +33,7 @@ const RULE_TYPES = {
     switch (ruleType) {
       case RULE_TYPES.CMD:
         return {
-          description: `Check if command executes properly`,
+          description: `Check if command is installed and available`,
         };
       case RULE_TYPES.EXIST:
         return {
@@ -74,9 +74,8 @@ const RULE_TYPES = {
       // Grab metadata for the standard rules
       const enhancedRule = Object.assign({}, rule, getMeta(type));
 
-      spinner.start(enhancedRule.description);
-
       if (rules[type]) {
+        spinner.start(enhancedRule.description);
         try {
           const ruleResult = { ...rule, pass: await rules[type](opts) };
           spinner[ruleResult.pass ? "succeed" : "fail"]();

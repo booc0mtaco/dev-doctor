@@ -42,13 +42,10 @@ Configure the tool by specifying checks with options for your project in dev-doc
 
 There are several types of checks that come pre-packaged with the tool:
 
-| Type      | Description                                              | Configuration     |
-| --------- | -------------------------------------------------------- | ----------------- |
-| `exist`   | Check to use when if a directory or file is present      | `glob`            |
-| `cmd`     | Check to see if a command can be run successfully        | `exec`            |
-| `version` | Check the version of a given command, specifying a range | `exec`, `range`   |
-| `os`      | Check various aspects of the current OS (e.g., version)  | `aspect`, `range` |
-| `network` | Check to see if something is running on a specified port | `portNumber`      |
+| Type    | Description                                         | Configuration |
+| ------- | --------------------------------------------------- | ------------- |
+| `exist` | Check to use when if a directory or file is present | `glob`        |
+| `cmd`   | Check to see if a command can be run successfully   | `exec`        |
 
 All check types allow for a hint on what to do if the check fails, a status message for when the
 check is being run, and an option to skip if the command is presently disabled.
@@ -69,11 +66,6 @@ module.exports = [
   {
     type: "cmd",
     exec: "path/to/executable",
-  },
-  {
-    type: "version",
-    exec: "path/to/executable -v",
-    range: "<1.0.0", // using semver range patterns
   },
 ];
 ```
