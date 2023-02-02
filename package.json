@@ -4,7 +4,7 @@
   "description": "A doctor for your dev",
   "main": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,11 @@
   "dependencies": {
     "chalk": "^5.2.0",
     "commander": "^10.0.0",
+    "glob": "^8.1.0",
     "lilconfig": "^2.0.6",
     "ora": "^6.1.2"
+  },
+  "devDependencies": {
+    "jest": "^29.4.1"
   }
 }
