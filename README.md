@@ -25,15 +25,20 @@ To add as a development dependency:
 $ npm install dev-doctor --save-dev
 ```
 
-When installed as a dependency, you can add an entry in `"scripts"` to run the command (using any
-desired options).
+You can also trigger it by simply running in the project directory:
+
+```sh
+$ npx dev-doctor
+```
+
+In all cases, add a **dev-doctor.config.js** in the project root.
 
 ## Usage
 
 By default, the tool will not do any checks, so it always succeed.
 
 ```sh
-$ npm run dev-doctor
+$ npx dev-doctor
 
 ✅ OK (0/0 checks passed)
 ```
