@@ -59,17 +59,25 @@ const RULE_TYPES = {
   async function runDoctor() {
     const spinner = ora("Calling doctor").start();
     const results = [];
-    const result = await lilconfig("dev-doctor", {
+    const configResults = await lilconfig("dev-doctor", {
       ignoreEmptySearchPlaces: false,
     }).search();
+
+    if (!configResults) {
+      spinner.warn("Nothing to check for. Exiting. . .");
+      return;
+    }
+
     spinner.info(
       `${chalk.underline.bold("The doctor is in")}! Performing checkup. . .`
     );
 
+    const configRules = (configResults && configResults.config) || [];
+
     // now check repo for each config item to see if it generates error
-    for (var i = 0, len = result.config.length; i < len; i++) {
-      const { type, ...opts } = result.config[i],
-        rule = result.config[i];
+    for (var i = 0, len = configRules.length; i < len; i++) {
+      const { type, ...opts } = configRules[i],
+        rule = configRules[i];
 
       // Grab metadata for the standard rules
       const enhancedRule = Object.assign({}, rule, getMeta(type));
@@ -92,12 +100,6 @@ const RULE_TYPES = {
         }
       }
     }
-
-    /**
-     * cmd
-     *  - foo.sh failed
-     *  - to fix: do bar
-     */
     printDiagnosis(results);
   }
 
